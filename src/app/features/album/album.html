@@ -1,0 +1,230 @@
+<main class="app-page pb-32">
+  <header class="app-header">
+    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-5">
+      <span>
+        <img src="havResonance-light.svg" alt="havResonance" class="h-27 w-auto dark:hidden" />
+        <img src="havResonance-dark.svg" alt="havResonance" class="hidden h-27 w-auto dark:block" />
+      </span>
+
+      <div class="flex items-center gap-3">
+        <a class="app-button" routerLink="/library">
+          <i class="bi bi-music-note-list size-5" aria-hidden="true"></i>
+
+          {{ 'common.library' | translate }}
+        </a>
+
+        <a class="app-button" routerLink="/about">
+          <i class="bi bi-info-circle size-5" aria-hidden="true"></i>
+
+          {{ 'common.about' | translate }}
+        </a>
+
+        <app-language-switcher />
+
+        <app-theme-toggle />
+
+        <button class="app-button-danger" type="button" (click)="disconnect()">
+          <i class="bi bi-box-arrow-left size-5" aria-hidden="true"></i>
+
+          {{ 'common.disconnect' | translate }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="mx-auto max-w-screen-2xl px-6 py-8">
+    @if (loading()) {
+      <div class="grid animate-pulse gap-8 md:grid-cols-[18rem_1fr]">
+        <div class="app-skeleton aspect-square rounded-2xl"></div>
+
+        <div class="self-end">
+          <div class="app-skeleton h-4 w-20 rounded"></div>
+
+          <div class="app-skeleton mt-5 h-12 w-3/4 rounded"></div>
+
+          <div class="app-skeleton mt-4 h-6 w-1/2 rounded"></div>
+        </div>
+      </div>
+
+      <div class="mt-12 space-y-3">
+        @for (item of [1, 2, 3, 4, 5, 6, 7, 8]; track item) {
+          <div class="app-skeleton h-14 animate-pulse rounded-lg"></div>
+        }
+      </div>
+    } @else if (errorMessage(); as message) {
+      <div class="app-danger-panel">
+        <h1 class="font-semibold">{{ 'album.couldNotLoad' | translate }}</h1>
+
+        <p class="app-danger-copy mt-2 text-sm">
+          {{ message }}
+        </p>
+
+        <button
+          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600 dark:bg-red-200 dark:text-red-950 dark:hover:bg-red-100"
+          type="button"
+          (click)="reload()">
+          <i class="bi bi-arrow-clockwise size-5" aria-hidden="true"></i>
+
+          {{ 'common.tryAgain' | translate }}
+        </button>
+      </div>
+    } @else if (album(); as currentAlbum) {
+      <div class="grid gap-8 md:grid-cols-[18rem_minmax(0,1fr)]">
+        <div
+          class="aspect-square overflow-hidden rounded-2xl bg-zinc-200 shadow-2xl dark:bg-zinc-900">
+          @if (coverArtUrl(); as coverUrl) {
+            <img
+              class="size-full object-cover"
+              [src]="coverUrl"
+              [alt]="
+                currentAlbum.name ?? currentAlbum.album ?? ('album.unknownAlbum' | translate)
+              " />
+          } @else {
+            <div
+              class="flex size-full items-center justify-center text-zinc-400 dark:text-zinc-700">
+              <i class="bi bi-disc size-24" aria-hidden="true"></i>
+            </div>
+          }
+        </div>
+
+        <div class="min-w-0 self-end">
+          <p class="app-muted text-sm font-semibold uppercase tracking-wider">
+            {{ 'album.album' | translate }}
+          </p>
+
+          <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            {{ currentAlbum.name ?? currentAlbum.album ?? ('album.unknownAlbum' | translate) }}
+          </h1>
+
+          <p class="app-muted mt-5 text-xl">
+            {{ currentAlbum.artist ?? ('album.unknownArtist' | translate) }}
+          </p>
+
+          <div class="app-subtle mt-4 flex flex-wrap gap-x-2 text-sm">
+            @if (currentAlbum.year) {
+              <span>{{ currentAlbum.year }}</span>
+            }
+
+            @if (currentAlbum.songCount !== undefined) {
+              <span>
+                @if (currentAlbum.year) {
+                  &bullet;
+                }
+
+                {{
+                  (currentAlbum.songCount === 1 ? 'common.trackCount' : 'common.trackCountPlural')
+                    | translate: { count: currentAlbum.songCount }
+                }}
+              </span>
+            }
+
+            @if (formatAlbumDuration(currentAlbum.duration); as duration) {
+              @if (duration) {
+                <span>&bullet; {{ duration }}</span>
+              }
+            }
+          </div>
+
+          @if (songs().length > 0) {
+            <button
+              class="app-primary-action mt-7 px-6 py-3"
+              type="button"
+              [attr.aria-label]="albumPlaybackKey(currentAlbum) | translate"
+              (click)="toggleAlbumPlayback()">
+              @if (isActiveAlbum(currentAlbum) && player.playing()) {
+                <i class="bi bi-pause-fill size-5" aria-hidden="true"></i>
+              } @else {
+                <i class="bi bi-play-fill size-5" aria-hidden="true"></i>
+              }
+
+              {{ albumPlaybackKey(currentAlbum) | translate }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="mt-12">
+        <div
+          class="app-divider app-subtle grid grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem] border-b px-3 pb-3 text-xs font-medium uppercase tracking-wider">
+          <span>#</span>
+          <span>{{ 'album.title' | translate }}</span>
+          <span aria-hidden="true"></span>
+          <span class="text-right">{{ 'album.duration' | translate }}</span>
+        </div>
+
+        <div class="mt-2">
+          @for (song of songs(); track song.id; let i = $index) {
+            <div
+              class="app-row group grid w-full grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem] items-center rounded-lg"
+              [class.app-row-active]="isCurrentSong(song)">
+              <button
+                class="col-span-2 grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)] items-center px-3 py-3 text-left disabled:cursor-not-allowed disabled:opacity-60"
+                type="button"
+                [disabled]="startingTrackId() === song.id"
+                (click)="playSong(song)">
+                <span class="app-subtle text-sm">
+                  @if (startingTrackId() === song.id) {
+                    <span
+                      class="block size-4 animate-spin rounded-full border-2 border-zinc-400 border-t-zinc-800 dark:border-zinc-600 dark:border-t-zinc-300"
+                      [attr.aria-label]="'player.startingPlayback' | translate"></span>
+                  } @else if (isCurrentSong(song) && player.playing()) {
+                    <i
+                      class="bi bi-pause-fill app-current-text size-4"
+                      role="img"
+                      [attr.aria-label]="'player.playing' | translate"></i>
+                  } @else {
+                    <span class="group-hover:hidden">
+                      {{ songNumber(song, i) }}
+                    </span>
+
+                    <i
+                      class="bi bi-play-fill hidden size-4 group-hover:inline-flex"
+                      aria-hidden="true"></i>
+                  }
+                </span>
+
+                <span class="min-w-0 pr-4">
+                  <span
+                    class="block truncate font-medium"
+                    [class.app-current-text]="isCurrentSong(song)"
+                    [class.app-track-text]="!isCurrentSong(song)">
+                    {{ song.title ?? ('album.unknownTrack' | translate) }}
+                  </span>
+
+                  @if (song.artist && song.artist !== currentAlbum.artist) {
+                    <span class="app-subtle mt-1 block truncate text-sm">
+                      {{ song.artist }}
+                    </span>
+                  }
+                </span>
+              </button>
+
+              @if (hasLyrics(song)) {
+                <button
+                  class="app-control-muted size-9 justify-self-center rounded-lg"
+                  type="button"
+                  [attr.aria-label]="
+                    'lyrics.openForTrack'
+                      | translate: { track: song.title ?? ('album.unknownTrack' | translate) }
+                  "
+                  (click)="openLyrics($event, song)">
+                  <i class="bi bi-mic-fill size-4" aria-hidden="true"></i>
+                </button>
+              } @else {
+                <span aria-hidden="true"></span>
+              }
+
+              <span class="app-subtle px-3 text-right text-sm tabular-nums">
+                {{ formatDuration(song.duration) }}
+              </span>
+            </div>
+          } @empty {
+            <p class="app-subtle mt-3 py-8">{{ 'album.empty' | translate }}</p>
+          }
+        </div>
+      </div>
+    }
+  </section>
+
+  <app-lyrics-panel [open]="lyricsOpen()" [track]="lyricsTrack()" (closed)="closeLyrics()" />
+</main>

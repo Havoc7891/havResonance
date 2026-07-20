@@ -1,0 +1,10 @@
+{
+  "/api/opensubsonic": {
+    "target": "https://bandcamp.com",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/opensubsonic": "/api/subsonic"
+    }
+  }
+}

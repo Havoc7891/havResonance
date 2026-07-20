@@ -1,0 +1,58 @@
+{
+  "name": "havresonance",
+  "version": "0.1.0",
+  "description": "Angular-based music player for an OpenSubsonic-compatible music collection.",
+  "author": "René Nicolaus <havresonance@havoc.de> (https://havoc.de)",
+  "scripts": {
+    "ng": "ng",
+    "sync:version": "node scripts/sync-app-version.mjs",
+    "sync:license": "node scripts/sync-app-license.mjs",
+    "sync:licenses": "node scripts/sync-third-party-licenses.mjs",
+    "prestart": "npm run sync:version && npm run sync:license && npm run sync:licenses",
+    "start": "ng serve",
+    "prebuild": "npm run sync:version && npm run sync:license && npm run sync:licenses",
+    "build": "ng build",
+    "prebuild:pages": "npm run sync:version && npm run sync:license && npm run sync:licenses",
+    "build:pages": "ng build --configuration production --base-href ./",
+    "watch": "ng build --watch --configuration development",
+    "pretest": "npm run sync:version && npm run sync:license && npm run sync:licenses",
+    "test": "ng test"
+  },
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Havoc7891/havResonance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Havoc7891/havResonance/issues"
+  },
+  "homepage": "https://havresonance.havoc.de/",
+  "packageManager": "npm@11.16.0",
+  "dependencies": {
+    "@angular/common": "^22.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/core": "^22.0.0",
+    "@angular/forms": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/router": "^22.0.0",
+    "@ngx-translate/core": "^18.0.0",
+    "@ngx-translate/http-loader": "^18.0.0",
+    "bootstrap-icons": "^1.13.1",
+    "hash-wasm": "^4.12.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.0.7",
+    "@angular/cli": "^22.0.7",
+    "@angular/compiler-cli": "^22.0.0",
+    "@tailwindcss/postcss": "^4.1.12",
+    "jsdom": "^28.0.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^4.1.12",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
+  }
+}

@@ -1,0 +1,146 @@
+<main class="app-page flex items-center justify-center px-4 py-12">
+  <section class="app-card w-full max-w-md rounded-2xl p-8">
+    <nav class="mb-6 flex justify-end gap-2">
+      <a class="app-button px-3 py-1.5" routerLink="/about">
+        <i class="bi bi-info-circle size-4" aria-hidden="true"></i>
+
+        {{ 'common.about' | translate }}
+      </a>
+
+      <app-language-switcher />
+
+      <app-theme-toggle />
+    </nav>
+
+    <header class="mb-8">
+      <img
+        src="havResonance-light.svg"
+        alt="havResonance"
+        class="mx-auto mb-8 h-27 w-auto dark:hidden" />
+      <img
+        src="havResonance-dark.svg"
+        alt="havResonance"
+        class="mx-auto mb-8 hidden h-27 w-auto dark:block" />
+
+      <p class="app-muted mt-2 text-sm">{{ 'connection.description' | translate }}</p>
+    </header>
+
+    <form class="space-y-5" (ngSubmit)="connect()">
+      <fieldset>
+        <legend class="app-field-label">{{ 'connection.mode' | translate }}</legend>
+
+        <div class="mt-2 grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+          <button
+            class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors"
+            type="button"
+            [class.bg-white]="mode === 'direct'"
+            [class.text-zinc-950]="mode === 'direct'"
+            [class.shadow-sm]="mode === 'direct'"
+            [class.text-zinc-500]="mode !== 'direct'"
+            [class.hover:text-zinc-950]="mode !== 'direct'"
+            [class.dark:bg-zinc-950]="mode === 'direct'"
+            [class.dark:text-zinc-50]="mode === 'direct'"
+            [class.dark:text-zinc-400]="mode !== 'direct'"
+            [class.dark:hover:text-zinc-50]="mode !== 'direct'"
+            [attr.aria-pressed]="mode === 'direct'"
+            (click)="selectMode('direct')">
+            <i class="bi bi-hdd-network size-4" aria-hidden="true"></i>
+
+            {{ 'connection.directMode' | translate }}
+          </button>
+
+          <button
+            class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors"
+            type="button"
+            [class.bg-white]="mode === 'proxy'"
+            [class.text-zinc-950]="mode === 'proxy'"
+            [class.shadow-sm]="mode === 'proxy'"
+            [class.text-zinc-500]="mode !== 'proxy'"
+            [class.hover:text-zinc-950]="mode !== 'proxy'"
+            [class.dark:bg-zinc-950]="mode === 'proxy'"
+            [class.dark:text-zinc-50]="mode === 'proxy'"
+            [class.dark:text-zinc-400]="mode !== 'proxy'"
+            [class.dark:hover:text-zinc-50]="mode !== 'proxy'"
+            [attr.aria-pressed]="mode === 'proxy'"
+            (click)="selectMode('proxy')">
+            <i class="bi bi-diagram-3 size-4" aria-hidden="true"></i>
+
+            {{ 'connection.proxyMode' | translate }}
+          </button>
+        </div>
+      </fieldset>
+
+      <label class="block">
+        <span class="app-field-label">
+          {{ serverUrlLabelKey() | translate }}
+          <span class="text-red-500 dark:text-red-300" aria-hidden="true">*</span>
+          <span class="sr-only">{{ 'common.required' | translate }}</span>
+        </span>
+
+        <input
+          class="app-input px-4 py-3"
+          type="text"
+          name="serverUrl"
+          [(ngModel)]="serverUrl"
+          required
+          [placeholder]="serverUrlPlaceholder()"
+          autocomplete="url" />
+      </label>
+
+      <label class="block">
+        <span class="app-field-label">
+          {{ 'connection.username' | translate }}
+          <span class="text-red-500 dark:text-red-300" aria-hidden="true">*</span>
+          <span class="sr-only">{{ 'common.required' | translate }}</span>
+        </span>
+
+        <input
+          class="app-input px-4 py-3"
+          type="text"
+          name="username"
+          [(ngModel)]="username"
+          required
+          autocomplete="username" />
+      </label>
+
+      <label class="block">
+        <span class="app-field-label">
+          {{ 'connection.password' | translate }}
+          <span class="text-red-500 dark:text-red-300" aria-hidden="true">*</span>
+          <span class="sr-only">{{ 'common.required' | translate }}</span>
+        </span>
+
+        <input
+          class="app-input px-4 py-3"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password" />
+      </label>
+
+      <button
+        class="app-button w-full px-4 py-3"
+        type="submit"
+        [disabled]="connecting() || !connectionReady()">
+        @if (connecting()) {
+          <span
+            class="size-4 animate-spin rounded-full border-2 border-zinc-400 border-t-zinc-800 dark:border-zinc-600 dark:border-t-zinc-300"
+            aria-hidden="true"></span>
+
+          {{ 'connection.connecting' | translate }}
+        } @else {
+          <i class="bi bi-box-arrow-right size-5" aria-hidden="true"></i>
+
+          {{ 'connection.connect' | translate }}
+        }
+      </button>
+    </form>
+
+    @if (errorMessage(); as message) {
+      <div class="app-danger-message mt-5 rounded-lg border px-4 py-3 text-sm" role="alert">
+        {{ message }}
+      </div>
+    }
+  </section>
+</main>

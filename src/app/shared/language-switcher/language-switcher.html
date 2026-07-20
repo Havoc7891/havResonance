@@ -1,0 +1,16 @@
+<div
+  class="inline-flex h-10 items-center rounded-lg border border-zinc-300 bg-white p-1 shadow-sm dark:border-zinc-700 dark:bg-transparent dark:shadow-none"
+  role="group"
+  [attr.aria-label]="'language.label' | translate">
+  @for (item of language.languages; track item.code) {
+    <button
+      class="app-language-option"
+      type="button"
+      [class.app-language-option-active]="language.isActive(item.code)"
+      [attr.aria-pressed]="language.isActive(item.code)"
+      [title]="item.labelKey | translate"
+      (click)="switchLanguage(item.code)">
+      {{ item.shortLabel }}
+    </button>
+  }
+</div>

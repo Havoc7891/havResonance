@@ -1,0 +1,251 @@
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html {
+  background: #fafafa;
+  color-scheme: light;
+  scrollbar-color: #a1a1aa #fafafa;
+}
+
+html.dark {
+  background: #09090b;
+  color-scheme: dark;
+  scrollbar-color: #52525b #09090b;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+* {
+  scrollbar-color: #a1a1aa #fafafa;
+}
+
+html.dark * {
+  scrollbar-color: #52525b #09090b;
+}
+
+::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+::-webkit-scrollbar-track {
+  background: #fafafa;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #09090b;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid #fafafa;
+  border-radius: 999px;
+  background: #a1a1aa;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  border-color: #09090b;
+  background: #52525b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+button:not(:disabled),
+a,
+input[type='button']:not(:disabled),
+input[type='range']:not(:disabled),
+input[type='submit']:not(:disabled),
+[role='button'] {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled {
+  cursor: not-allowed;
+}
+
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type='search'] {
+  appearance: textfield;
+}
+
+input[type='range'] {
+  accent-color: #18181b;
+}
+
+html.dark input[type='range'] {
+  accent-color: #ffffff;
+}
+
+@layer components {
+  .app-page {
+    @apply min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-100;
+  }
+
+  .app-header {
+    @apply sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur-2xl transition-colors dark:border-zinc-800 dark:bg-zinc-950/90;
+  }
+
+  .app-card {
+    @apply border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900;
+  }
+
+  .app-button {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 disabled:opacity-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
+  }
+
+  .app-button-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-400 dark:shadow-none dark:hover:border-red-900 dark:hover:bg-red-950/40 dark:hover:text-red-300;
+  }
+
+  .app-icon-button {
+    @apply inline-flex size-10 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
+  }
+
+  .app-language-option {
+    @apply h-8 rounded-md px-2.5 text-xs font-semibold text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white;
+  }
+
+  .app-language-option-active {
+    @apply bg-zinc-950 text-white hover:bg-zinc-950 hover:text-white dark:bg-white dark:text-zinc-950 dark:hover:bg-white dark:hover:text-zinc-950;
+  }
+
+  .app-control {
+    @apply flex items-center justify-center text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-30 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white;
+  }
+
+  .app-control-muted {
+    @apply flex items-center justify-center text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-950 dark:hover:bg-zinc-900 dark:hover:text-white;
+  }
+
+  .app-active-control {
+    @apply text-zinc-950 dark:text-white;
+  }
+
+  .app-active-dot {
+    @apply bg-zinc-950 dark:bg-white;
+  }
+
+  .app-field-label {
+    @apply mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300;
+  }
+
+  .app-input {
+    @apply w-full rounded-lg border border-zinc-300 bg-white text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-zinc-500 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500 dark:focus:ring-zinc-700;
+  }
+
+  .app-muted {
+    @apply text-zinc-600 dark:text-zinc-400;
+  }
+
+  .app-subtle {
+    @apply text-zinc-500;
+  }
+
+  .app-faint {
+    @apply text-zinc-400 dark:text-zinc-600;
+  }
+
+  .app-divider {
+    @apply border-zinc-200 dark:border-zinc-800;
+  }
+
+  .app-skeleton {
+    @apply bg-zinc-200 dark:bg-zinc-800;
+  }
+
+  .app-surface {
+    @apply bg-white dark:bg-zinc-900;
+  }
+
+  .app-soft-surface {
+    @apply bg-zinc-100 dark:bg-zinc-900;
+  }
+
+  .app-row {
+    @apply transition hover:bg-zinc-100 dark:hover:bg-zinc-900;
+  }
+
+  .app-row-active {
+    @apply bg-zinc-100 dark:bg-zinc-900;
+  }
+
+  .app-current-text {
+    @apply text-zinc-950 dark:text-white;
+  }
+
+  .app-track-text {
+    @apply text-zinc-800 dark:text-zinc-200;
+  }
+
+  .app-primary-action {
+    @apply inline-flex items-center justify-center gap-3 rounded-full border border-zinc-300 bg-white font-semibold text-zinc-950 shadow-lg transition hover:border-transparent hover:bg-zinc-800 hover:text-white hover:shadow-xl dark:border-transparent dark:hover:border-transparent;
+  }
+
+  .app-floating-action {
+    @apply bg-white text-zinc-950 shadow-xl transition hover:bg-zinc-800 hover:text-white hover:shadow-2xl focus-visible:ring-2 focus-visible:ring-zinc-300 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-50 disabled:cursor-not-allowed disabled:opacity-60 dark:focus-visible:ring-offset-zinc-950;
+  }
+
+  .app-action-badge {
+    @apply bg-zinc-950 text-white dark:bg-white dark:text-zinc-950;
+  }
+
+  .app-danger-panel {
+    @apply rounded-xl border border-red-300 bg-red-50 p-6 text-red-900 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-200;
+  }
+
+  .app-danger-message {
+    @apply border-red-300 bg-red-50 text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300;
+  }
+
+  .app-danger-copy {
+    @apply text-red-700 dark:text-red-300;
+  }
+}
+
+.bi {
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.bi:not(.hidden) {
+  display: inline-flex;
+}
+
+.bi::before {
+  line-height: 1;
+  vertical-align: 0;
+}
+
+.bi.size-4::before {
+  font-size: 1rem;
+}
+
+.bi.size-5::before {
+  font-size: 1.25rem;
+}
+
+.bi.size-16::before {
+  font-size: 4rem;
+}
+
+.bi.size-24::before {
+  font-size: 6rem;
+}

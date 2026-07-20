@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>havResonance</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="favicon-light.ico?theme=light"
+      data-app-favicon="ico" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="favicon-light-32x32.png?theme=light"
+      data-app-favicon="png32" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="favicon-light-16x16.png?theme=light"
+      data-app-favicon="png16" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="favicon-light.png?theme=light"
+      data-app-favicon="png96" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="any"
+      href="havResonance-mark-light.svg?theme=light"
+      data-app-favicon="svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <script>
+      (() => {
+        const storageKey = 'havResonance.theme';
+
+        const faviconByTheme = {
+          dark: {
+            ico: 'favicon-dark.ico?theme=dark',
+            png16: 'favicon-dark-16x16.png?theme=dark',
+            png32: 'favicon-dark-32x32.png?theme=dark',
+            png96: 'favicon-dark.png?theme=dark',
+            svg: 'havResonance-mark-dark.svg?theme=dark',
+          },
+          light: {
+            ico: 'favicon-light.ico?theme=light',
+            png16: 'favicon-light-16x16.png?theme=light',
+            png32: 'favicon-light-32x32.png?theme=light',
+            png96: 'favicon-light.png?theme=light',
+            svg: 'havResonance-mark-light.svg?theme=light',
+          },
+        };
+
+        const applyTheme = (theme) => {
+          document.documentElement.classList.toggle('dark', theme === 'dark');
+          document.documentElement.style.colorScheme = theme;
+
+          const favicons = document.querySelectorAll('link[data-app-favicon]');
+
+          favicons.forEach((favicon) => {
+            const kind = favicon.getAttribute('data-app-favicon');
+
+            const href = kind ? faviconByTheme[theme][kind] : undefined;
+
+            if (!href) {
+              return;
+            }
+
+            const nextFavicon = favicon.cloneNode();
+            nextFavicon.setAttribute('href', href);
+
+            favicon.replaceWith(nextFavicon);
+          });
+        };
+
+        try {
+          const storedTheme = localStorage.getItem(storageKey);
+
+          const prefersDark =
+            typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches;
+
+          const theme =
+            storedTheme === 'light' || storedTheme === 'dark'
+              ? storedTheme
+              : prefersDark
+                ? 'dark'
+                : 'light';
+
+          applyTheme(theme);
+        } catch {
+          applyTheme('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <app-root></app-root>
+  </body>
+</html>

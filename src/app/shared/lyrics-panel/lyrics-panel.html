@@ -1,0 +1,93 @@
+@if (open()) {
+  <div class="fixed inset-0 z-60">
+    <button
+      class="absolute inset-0 bg-zinc-950/35 backdrop-blur-sm dark:bg-black/60"
+      type="button"
+      [attr.aria-label]="'lyrics.close' | translate"
+      (click)="close()"></button>
+
+    <aside
+      class="app-divider absolute inset-y-0 right-0 flex w-full max-w-lg flex-col border-l bg-white text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-zinc-100"
+      [attr.aria-label]="'lyrics.title' | translate">
+      <header class="app-divider flex items-center justify-between gap-4 border-b px-5 py-4">
+        <div class="min-w-0">
+          <h2 class="text-lg font-semibold">{{ 'lyrics.title' | translate }}</h2>
+
+          @if (track(); as currentTrack) {
+            <p class="app-muted mt-1 truncate text-sm">
+              {{ currentTrack.title }}
+            </p>
+
+            <p class="app-faint mt-0.5 truncate text-xs">
+              {{ currentTrack.artist }}
+            </p>
+          }
+        </div>
+
+        <button
+          class="app-control-muted size-9 shrink-0 rounded-full"
+          type="button"
+          [attr.aria-label]="'lyrics.close' | translate"
+          (click)="close()">
+          <i class="bi bi-x-lg size-5" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      <div class="flex-1 overflow-y-auto px-5 py-6">
+        @if (loading()) {
+          <div class="flex h-full min-h-64 flex-col items-center justify-center text-center">
+            <span
+              class="size-8 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-800 dark:border-zinc-700 dark:border-t-zinc-300"
+              [attr.aria-label]="'lyrics.loading' | translate"></span>
+
+            <p class="app-subtle mt-4 text-sm">{{ 'lyrics.loading' | translate }}</p>
+          </div>
+        } @else if (errorMessage(); as message) {
+          <div class="app-danger-panel p-5">
+            <h3 class="font-semibold">{{ 'lyrics.couldNotLoad' | translate }}</h3>
+
+            <p class="app-danger-copy mt-2 text-sm">
+              {{ message }}
+            </p>
+          </div>
+        } @else if (lyrics(); as currentLyrics) {
+          @if (currentLyrics.kind === 'plain') {
+            <p class="whitespace-pre-line text-base leading-8 text-zinc-800 dark:text-zinc-200">
+              {{ currentLyrics.text }}
+            </p>
+          } @else if (currentLyrics.kind === 'structured') {
+            <div class="space-y-8">
+              @for (entry of currentLyrics.entries; track $index) {
+                <section>
+                  @if (entry.language) {
+                    <p class="app-faint mb-4 text-xs font-semibold uppercase tracking-wider">
+                      {{ entry.language }}
+                    </p>
+                  }
+
+                  <div class="space-y-3 text-base leading-8 text-zinc-800 dark:text-zinc-200">
+                    @for (line of entry.lines; track $index) {
+                      <p>{{ line }}</p>
+                    }
+                  </div>
+                </section>
+              }
+            </div>
+          } @else {
+            <div class="flex h-full min-h-64 flex-col items-center justify-center text-center">
+              <i
+                class="bi bi-mic-fill size-16 text-zinc-300 dark:text-zinc-700"
+                aria-hidden="true"></i>
+
+              <h3 class="mt-5 font-semibold">{{ 'lyrics.noLyricsTitle' | translate }}</h3>
+
+              <p class="app-subtle mt-2 text-sm">
+                {{ 'lyrics.noLyricsDescription' | translate }}
+              </p>
+            </div>
+          }
+        }
+      </div>
+    </aside>
+  </div>
+}

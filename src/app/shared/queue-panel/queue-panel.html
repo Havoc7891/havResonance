@@ -1,0 +1,142 @@
+@if (open()) {
+  <div class="fixed inset-0 z-60">
+    <button
+      class="absolute inset-0 bg-zinc-950/35 backdrop-blur-sm dark:bg-black/60"
+      type="button"
+      [attr.aria-label]="'queue.close' | translate"
+      (click)="close()"></button>
+
+    <aside
+      class="app-divider absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l bg-white text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-zinc-100"
+      [attr.aria-label]="'queue.title' | translate">
+      <header class="app-divider flex items-center justify-between border-b px-5 py-4">
+        <div>
+          <h2 class="text-lg font-semibold">{{ 'queue.title' | translate }}</h2>
+
+          <p class="app-subtle mt-1 text-xs">
+            {{
+              (player.queue().length === 1 ? 'queue.trackCount' : 'queue.trackCountPlural')
+                | translate: { count: player.queue().length }
+            }}
+          </p>
+        </div>
+
+        <div class="app-faint mt-2 flex gap-2 text-xs">
+          @if (player.shuffleEnabled()) {
+            <span>{{ 'queue.shuffleOn' | translate }}</span>
+          }
+
+          @if (player.repeatMode() === 'all') {
+            <span>{{ 'queue.repeatAll' | translate }}</span>
+          }
+
+          @if (player.repeatMode() === 'one') {
+            <span>{{ 'queue.repeatOne' | translate }}</span>
+          }
+        </div>
+
+        <button
+          class="app-control-muted size-9 rounded-full"
+          type="button"
+          [attr.aria-label]="'queue.close' | translate"
+          (click)="close()">
+          <i class="bi bi-x-lg size-5" aria-hidden="true"></i>
+        </button>
+      </header>
+
+      @if (player.queueEmpty()) {
+        <div class="flex flex-1 flex-col items-center justify-center px-8 text-center">
+          <i class="bi bi-list-ul size-16 text-zinc-300 dark:text-zinc-700" aria-hidden="true"></i>
+
+          <h3 class="mt-5 font-semibold">{{ 'queue.emptyTitle' | translate }}</h3>
+
+          <p class="app-subtle mt-2 text-sm">{{ 'queue.emptyDescription' | translate }}</p>
+        </div>
+      } @else {
+        <div class="flex-1 overflow-y-auto p-3">
+          @for (track of player.queue(); track track.id; let i = $index) {
+            <button
+              class="app-row group mb-1 grid w-full grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-2 text-left"
+              type="button"
+              [class.app-row-active]="i === player.queueIndex()"
+              (click)="selectTrack(i)">
+              <div class="relative size-12 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-900">
+                @if (track.coverArtUrl) {
+                  <img
+                    class="size-full object-cover"
+                    [src]="track.coverArtUrl"
+                    [alt]="track.album"
+                    loading="lazy" />
+                }
+
+                @if (i === player.queueIndex() && player.playing()) {
+                  <div class="absolute inset-0 flex items-center justify-center bg-black/55">
+                    <i
+                      class="bi bi-pause-fill size-5 text-white"
+                      role="img"
+                      [attr.aria-label]="'player.playing' | translate"></i>
+                  </div>
+                }
+              </div>
+
+              <div class="min-w-0">
+                <p
+                  class="truncate text-sm font-medium"
+                  [class.app-current-text]="i === player.queueIndex()"
+                  [class.app-track-text]="i !== player.queueIndex()">
+                  {{ track.title }}
+                </p>
+
+                <p class="app-subtle mt-1 truncate text-xs">
+                  {{ track.artist }}
+                </p>
+
+                <p class="app-faint mt-0.5 truncate text-xs">
+                  {{ track.album }}
+                </p>
+              </div>
+
+              <div class="flex items-center gap-1" (click)="$event.stopPropagation()">
+                <span class="app-faint mr-1 hidden text-xs tabular-nums sm:inline">
+                  {{ formatDuration(track.duration) }}
+                </span>
+
+                <button
+                  class="app-control-muted size-8 rounded-lg disabled:cursor-not-allowed disabled:opacity-20"
+                  type="button"
+                  [disabled]="i === 0"
+                  [attr.aria-label]="'queue.moveUp' | translate"
+                  (click)="moveUp($event, i)">
+                  <i class="bi bi-chevron-up size-4" aria-hidden="true"></i>
+                </button>
+
+                <button
+                  class="app-control-muted size-8 rounded-lg disabled:cursor-not-allowed disabled:opacity-20"
+                  type="button"
+                  [disabled]="i === player.queue().length - 1"
+                  [attr.aria-label]="'queue.moveDown' | translate"
+                  (click)="moveDown($event, i)">
+                  <i class="bi bi-chevron-down size-4" aria-hidden="true"></i>
+                </button>
+
+                <button
+                  class="flex size-8 items-center justify-center rounded-lg text-zinc-500 transition hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-950 dark:hover:text-red-300"
+                  type="button"
+                  [attr.aria-label]="'queue.remove' | translate"
+                  (click)="removeTrack($event, i)">
+                  <i class="bi bi-trash size-4" aria-hidden="true"></i>
+                </button>
+              </div>
+            </button>
+          }
+        </div>
+
+        <footer class="app-divider border-t p-4">
+          <button class="app-button-danger w-full py-2.5" type="button" (click)="clearQueue()">
+            {{ 'queue.clear' | translate }}
+          </button>
+        </footer>
+      }
+    </aside>
+  </div>
+}

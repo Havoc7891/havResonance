@@ -1,0 +1,219 @@
+@if (player.currentTrack(); as track) {
+  <aside
+    class="app-divider fixed inset-x-0 bottom-0 z-50 border-t bg-white/95 text-zinc-950 shadow-2xl backdrop-blur-2xl dark:bg-zinc-950/95 dark:text-zinc-100">
+    <input
+      class="absolute inset-x-0 top-0 h-1 w-full cursor-pointer"
+      type="range"
+      min="0"
+      max="100"
+      step="0.1"
+      [value]="player.progress()"
+      [attr.aria-label]="'player.position' | translate"
+      (input)="seek($event)" />
+
+    <div
+      class="mx-auto grid max-w-screen-2xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 md:grid-cols-[minmax(0,1fr)_minmax(18rem,1fr)_minmax(0,1fr)]">
+      <div class="flex min-w-0 items-center gap-3">
+        @if (track.albumId) {
+          <a
+            class="size-12 shrink-0 overflow-hidden rounded-lg bg-zinc-200 transition hover:opacity-80 dark:bg-zinc-900"
+            [routerLink]="['/album', track.albumId]"
+            [attr.aria-label]="'common.openAlbum' | translate: { album: track.album }">
+            @if (track.coverArtUrl) {
+              <img class="size-full object-cover" [src]="track.coverArtUrl" [alt]="track.album" />
+            }
+          </a>
+        } @else {
+          <div class="size-12 shrink-0 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-900">
+            @if (track.coverArtUrl) {
+              <img class="size-full object-cover" [src]="track.coverArtUrl" [alt]="track.album" />
+            }
+          </div>
+        }
+
+        <div class="min-w-0">
+          @if (track.albumId) {
+            <a
+              class="block truncate text-sm font-medium transition hover:text-zinc-950 hover:underline dark:hover:text-white"
+              [routerLink]="['/album', track.albumId]"
+              [title]="track.album">
+              {{ track.title }}
+            </a>
+          } @else {
+            <p class="truncate text-sm font-medium">
+              {{ track.title }}
+            </p>
+          }
+
+          <p class="app-subtle truncate text-sm">
+            {{ track.artist }}
+          </p>
+
+          @if (player.queue().length > 1) {
+            <p class="app-faint mt-0.5 text-xs">
+              {{ player.queueIndex() + 1 }}
+              of
+              {{ player.queue().length }}
+            </p>
+          }
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 md:justify-center">
+        <button
+          class="app-control relative hidden size-9 rounded-full sm:flex"
+          type="button"
+          [class.app-active-control]="player.shuffleEnabled()"
+          [disabled]="player.queue().length < 2"
+          [attr.aria-pressed]="player.shuffleEnabled()"
+          [attr.aria-label]="'player.shuffle' | translate"
+          (click)="toggleShuffle()">
+          <i class="bi bi-shuffle size-5" aria-hidden="true"></i>
+
+          @if (player.shuffleEnabled()) {
+            <span class="app-active-dot absolute bottom-0 size-1 rounded-full"></span>
+          }
+        </button>
+
+        <button
+          class="app-control size-9 rounded-full"
+          type="button"
+          [disabled]="!player.currentTrack()"
+          [attr.aria-label]="'player.previousTrack' | translate"
+          (click)="previous()">
+          <i class="bi bi-skip-start-fill size-5" aria-hidden="true"></i>
+        </button>
+
+        <button
+          class="app-primary-action size-10 rounded-full"
+          type="button"
+          [attr.aria-label]="(player.playing() ? 'player.pause' : 'player.play') | translate"
+          (click)="togglePlayback()">
+          @if (player.playing()) {
+            <i class="bi bi-pause-fill size-5" aria-hidden="true"></i>
+          } @else {
+            <i class="bi bi-play-fill ml-0.5 size-5" aria-hidden="true"></i>
+          }
+        </button>
+
+        <button
+          class="app-control size-9 rounded-full"
+          type="button"
+          [disabled]="!player.hasNext()"
+          [attr.aria-label]="'player.nextTrack' | translate"
+          (click)="next()">
+          <i class="bi bi-skip-end-fill size-5" aria-hidden="true"></i>
+        </button>
+
+        <button
+          class="app-control relative hidden size-9 rounded-full sm:flex"
+          type="button"
+          [class.app-active-control]="player.repeatMode() !== 'off'"
+          [attr.aria-label]="repeatLabel() | translate"
+          (click)="cycleRepeatMode()">
+          @if (player.repeatMode() === 'one') {
+            <i class="bi bi-repeat-1 size-5" aria-hidden="true"></i>
+          } @else {
+            <i class="bi bi-repeat size-5" aria-hidden="true"></i>
+          }
+
+          @if (player.repeatMode() !== 'off') {
+            <span class="app-active-dot absolute bottom-0 size-1 rounded-full"></span>
+          }
+        </button>
+
+        @if (lyricsAvailable()) {
+          <button
+            class="app-control-muted size-9 rounded-full md:hidden"
+            type="button"
+            [attr.aria-label]="'player.openLyrics' | translate"
+            (click)="openLyrics()">
+            <i class="bi bi-mic-fill size-5" aria-hidden="true"></i>
+          </button>
+        }
+
+        <button
+          class="app-control-muted size-9 rounded-full md:hidden"
+          type="button"
+          [attr.aria-label]="'player.openQueue' | translate"
+          (click)="openQueue()">
+          <i class="bi bi-list-ul size-5" aria-hidden="true"></i>
+        </button>
+
+        <span class="app-subtle hidden min-w-24 text-xs tabular-nums sm:block">
+          {{ formatDuration(player.currentTime()) }}
+          /
+          {{ formatDuration(player.duration()) }}
+        </span>
+      </div>
+
+      <div class="hidden items-center justify-end gap-3 md:flex">
+        @if (lyricsAvailable()) {
+          <button
+            class="app-control-muted size-9 rounded-lg"
+            type="button"
+            [attr.aria-label]="'player.openLyrics' | translate"
+            (click)="openLyrics()">
+            <i class="bi bi-mic-fill size-5" aria-hidden="true"></i>
+          </button>
+        }
+
+        <button
+          class="app-control-muted relative size-9 rounded-lg"
+          type="button"
+          [attr.aria-label]="'player.openQueue' | translate"
+          (click)="openQueue()">
+          <i class="bi bi-list-ul size-5" aria-hidden="true"></i>
+
+          @if (player.upcomingCount() > 0) {
+            <span
+              class="app-action-badge absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold leading-4">
+              {{ player.upcomingCount() }}
+            </span>
+          }
+        </button>
+
+        <button
+          class="app-control-muted size-9 rounded-lg"
+          type="button"
+          [attr.aria-label]="
+            (player.effectivelyMuted() ? 'player.unmute' : 'player.mute') | translate
+          "
+          [attr.aria-pressed]="player.effectivelyMuted()"
+          (click)="toggleMute()">
+          @if (player.effectivelyMuted()) {
+            <i class="bi bi-volume-mute size-5" aria-hidden="true"></i>
+          } @else if (player.volume() < 0.5) {
+            <i class="bi bi-volume-down size-5" aria-hidden="true"></i>
+          } @else {
+            <i class="bi bi-volume-up size-5" aria-hidden="true"></i>
+          }
+        </button>
+
+        <input
+          class="w-24"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          [value]="player.volume()"
+          [attr.aria-label]="'player.volume' | translate"
+          (input)="changeVolume($event)" />
+      </div>
+    </div>
+
+    @if (player.errorMessage(); as message) {
+      <div
+        class="border-t border-red-300 bg-red-50 px-4 py-2 text-center text-xs text-red-700 dark:border-red-900/50 dark:bg-red-950 dark:text-red-300">
+        {{ message }}
+      </div>
+    }
+  </aside>
+}
+
+<app-queue-panel [open]="queueOpen()" (closed)="closeQueue()" />
+
+<app-lyrics-panel
+  [open]="lyricsOpen() && player.currentTrack() !== null"
+  [track]="player.currentTrack()"
+  (closed)="closeLyrics()" />

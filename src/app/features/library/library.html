@@ -1,0 +1,215 @@
+<main class="app-page pb-32">
+  <header class="app-header">
+    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-5">
+      <div class="flex items-center gap-3">
+        <span>
+          <img src="havResonance-light.svg" alt="havResonance" class="h-27 w-auto dark:hidden" />
+          <img
+            src="havResonance-dark.svg"
+            alt="havResonance"
+            class="hidden h-27 w-auto dark:block" />
+        </span>
+
+        <p class="app-muted mt-1 text-sm">
+          {{ 'library.connectedTo' | translate }}
+          <span class="font-medium text-zinc-800 dark:text-zinc-300">
+            {{ connectionState.connectionDisplayName() }}
+          </span>
+          @if (connectionState.connection()?.serverVersion; as serverVersion) {
+            <span class="app-faint">{{ serverVersion }}</span>
+          }
+        </p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button class="app-button" type="button" [disabled]="loading()" (click)="reload()">
+          @if (loading()) {
+            <span
+              class="size-4 animate-spin rounded-full border-2 border-zinc-400 border-t-zinc-800 dark:border-zinc-600 dark:border-t-zinc-300"
+              aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-arrow-clockwise size-5" aria-hidden="true"></i>
+          }
+
+          {{ (loading() ? 'library.reloading' : 'library.reload') | translate }}
+        </button>
+
+        <a class="app-button" routerLink="/about">
+          <i class="bi bi-info-circle size-5" aria-hidden="true"></i>
+
+          {{ 'common.about' | translate }}
+        </a>
+
+        <app-language-switcher />
+
+        <app-theme-toggle />
+
+        <button class="app-button-danger" type="button" (click)="disconnect()">
+          <i class="bi bi-box-arrow-left size-5" aria-hidden="true"></i>
+
+          {{ 'common.disconnect' | translate }}
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <section class="mx-auto max-w-screen-2xl px-6 py-8">
+    <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h2 class="text-xl font-semibold">{{ libraryHeadingKey() | translate }}</h2>
+
+        <p class="app-muted mt-1 text-sm">
+          {{ librarySummaryKey() | translate: { count: albums().length } }}
+        </p>
+      </div>
+
+      <label class="block w-full sm:max-w-sm">
+        <span class="sr-only">{{ 'library.searchAlbums' | translate }}</span>
+
+        <span class="relative block">
+          <i
+            class="bi bi-search app-subtle pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
+            aria-hidden="true"></i>
+
+          <input
+            class="app-input py-2.5 pl-10 pr-10 text-sm"
+            type="search"
+            [value]="searchQuery()"
+            [placeholder]="'library.searchPlaceholder' | translate"
+            autocomplete="off"
+            (input)="searchChanged($event)" />
+
+          @if (searching()) {
+            <span
+              class="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-800 dark:border-zinc-700 dark:border-t-zinc-300"
+              [attr.aria-label]="'library.searchingAlbums' | translate"></span>
+          } @else if (searchQuery()) {
+            <button
+              class="app-control-muted absolute right-2 top-1/2 size-7 -translate-y-1/2 rounded-full"
+              type="button"
+              [attr.aria-label]="'library.clearSearch' | translate"
+              (click)="clearSearch()">
+              <i class="bi bi-x size-4" aria-hidden="true"></i>
+            </button>
+          }
+        </span>
+      </label>
+    </div>
+
+    @if (loading()) {
+      <div
+        class="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+        [attr.aria-label]="'library.loadingAlbums' | translate">
+        @for (item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track item) {
+          <div class="animate-pulse">
+            <div class="app-skeleton aspect-square rounded-xl"></div>
+
+            <div class="app-skeleton mt-4 h4 w-3/4 rounded-lg"></div>
+
+            <div class="app-skeleton mt-2 h3 w-1/2 rounded-lg"></div>
+          </div>
+        }
+      </div>
+    } @else if (errorMessage(); as message) {
+      <div class="app-danger-panel">
+        <h2 class="font-semibold">{{ 'library.couldNotLoad' | translate }}</h2>
+
+        <p class="app-danger-copy mt-2 text-sm">
+          {{ message }}
+        </p>
+
+        <button
+          class="mt-5 inline-flex items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600 dark:bg-red-200 dark:text-red-950 dark:hover:bg-red-100"
+          type="button"
+          (click)="reload()">
+          <i class="bi bi-arrow-clockwise size-5" aria-hidden="true"></i>
+
+          {{ 'common.tryAgain' | translate }}
+        </button>
+      </div>
+    } @else if (albums().length === 0) {
+      <div class="app-card rounded-xl p-8 text-center">
+        <h2 class="text-lg font-semibold">{{ emptyTitleKey() | translate }}</h2>
+
+        <p class="app-muted mt-2 text-sm">{{ emptyDescriptionKey() | translate }}</p>
+      </div>
+    } @else {
+      <div
+        class="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        @for (item of albums(); track item.album.id) {
+          <article class="group min-w-0">
+            <div class="relative">
+              <button
+                class="block w-full text-left"
+                type="button"
+                [attr.aria-label]="
+                  'common.openAlbum' | translate: { album: albumTitle(item.album) }
+                "
+                (click)="openAlbum(item.album.id)">
+                <div
+                  class="relative aspect-square overflow-hidden rounded-xl bg-zinc-200 shadow-lg transition-opacity duration-200 group-hover:opacity-80 dark:bg-zinc-900">
+                  @if (item.coverArtUrl) {
+                    <img
+                      class="size-full object-cover"
+                      [src]="item.coverArtUrl"
+                      [alt]="albumTitle(item.album)"
+                      loading="lazy" />
+                  } @else {
+                    <div
+                      class="flex size-full items-center justify-center bg-zinc-100 text-zinc-400 dark:bg-zinc-900 dark:text-zinc-600">
+                      <i class="bi bi-disc size-16" aria-hidden="true"></i>
+                    </div>
+                  }
+                </div>
+              </button>
+
+              <button
+                class="app-floating-action pointer-events-none absolute bottom-3 right-3 z-10 flex size-11 items-center justify-center rounded-full opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                type="button"
+                [disabled]="startingAlbumId() === item.album.id"
+                [class.pointer-events-auto]="
+                  isActiveAlbum(item) || startingAlbumId() === item.album.id
+                "
+                [class.opacity-100]="isActiveAlbum(item) || startingAlbumId() === item.album.id"
+                [attr.aria-label]="
+                  albumPlaybackKey(item) | translate: { album: albumTitle(item.album) }
+                "
+                (click)="playAlbum(item)">
+                @if (startingAlbumId() === item.album.id) {
+                  <span
+                    class="size-4 animate-spin rounded-full border-2 border-zinc-400 border-t-zinc-950"
+                    aria-hidden="true"></span>
+                } @else if (isActiveAlbum(item) && player.playing()) {
+                  <i class="bi bi-pause-fill size-5" aria-hidden="true"></i>
+                } @else {
+                  <i class="bi bi-play-fill ml-0.5 size-5" aria-hidden="true"></i>
+                }
+              </button>
+            </div>
+
+            <button class="block w-full text-left" type="button" (click)="openAlbum(item.album.id)">
+              <h3
+                class="mt-4 truncate font-medium text-zinc-950 dark:text-zinc-100"
+                [title]="albumTitle(item.album)">
+                {{ albumTitle(item.album) }}
+              </h3>
+
+              <p class="app-muted mt-1 truncate text-sm" [title]="albumArtist(item.album)">
+                {{ albumArtist(item.album) }}
+              </p>
+
+              @if (item.album.songCount !== undefined) {
+                <p class="app-faint mt-1 text-xs">
+                  {{
+                    (item.album.songCount === 1 ? 'common.trackCount' : 'common.trackCountPlural')
+                      | translate: { count: item.album.songCount }
+                  }}
+                </p>
+              }
+            </button>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</main>

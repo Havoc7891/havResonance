@@ -1,0 +1,14 @@
+<button
+  class="app-icon-button"
+  type="button"
+  [attr.aria-label]="
+    theme.dark() ? ('theme.switchToLight' | translate) : ('theme.switchToDark' | translate)
+  "
+  [title]="theme.dark() ? ('theme.switchToLight' | translate) : ('theme.switchToDark' | translate)"
+  (click)="theme.toggle()">
+  @if (theme.dark()) {
+    <i class="bi bi-sun-fill size-5" aria-hidden="true"></i>
+  } @else {
+    <i class="bi bi-moon-stars-fill size-5" aria-hidden="true"></i>
+  }
+</button>
