@@ -1,6 +1,6 @@
 {
   "name": "havresonance",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Angular-based music player for an OpenSubsonic-compatible music collection.",
   "author": "René Nicolaus <havresonance@havoc.de> (https://havoc.de)",
   "scripts": {

@@ -14,6 +14,21 @@ interface AlbumViewModel {
   readonly coverArtUrl: string | null;
 }
 
+type AlbumSortMode = 'recentlyAdded' | 'titleAsc' | 'titleDesc' | 'artistAsc' | 'artistDesc';
+
+interface AlbumSortOption {
+  readonly mode: AlbumSortMode;
+  readonly labelKey: string;
+}
+
+const albumSortOptions: readonly AlbumSortOption[] = [
+  { mode: 'recentlyAdded', labelKey: 'library.sortRecentlyAdded' },
+  { mode: 'titleAsc', labelKey: 'library.sortTitleAsc' },
+  { mode: 'titleDesc', labelKey: 'library.sortTitleDesc' },
+  { mode: 'artistAsc', labelKey: 'library.sortArtistAsc' },
+  { mode: 'artistDesc', labelKey: 'library.sortArtistDesc' },
+];
+
 @Component({
   selector: 'app-library',
   imports: [RouterLink, TranslatePipe, LanguageSwitcher, ThemeToggle],
@@ -58,13 +73,17 @@ export class Library implements OnInit, OnDestroy {
   public readonly loading = signal<boolean>(true);
   public readonly searching = signal<boolean>(false);
   public readonly searchQuery = signal<string>('');
+  public readonly sortMode = signal<AlbumSortMode>('recentlyAdded');
   public readonly errorMessage = signal<string | null>(null);
   public readonly startingAlbumId = signal<string | null>(null);
+
+  public readonly sortOptions = albumSortOptions;
 
   public readonly searchActive = computed(() => this.searchQuery().trim().length > 0);
 
   private libraryRequestId = 0;
   private searchDebounceId?: number;
+  private albumResults: readonly AlbumViewModel[] = [];
   private newestAlbums: readonly AlbumViewModel[] = [];
 
   ngOnInit(): void {
@@ -118,6 +137,18 @@ export class Library implements OnInit, OnDestroy {
     this.clearSearchDebounce();
 
     this.loadAlbums();
+  }
+
+  public sortChanged(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+
+    if (!this.isAlbumSortMode(select.value)) {
+      return;
+    }
+
+    this.sortMode.set(select.value);
+
+    this.applyAlbumSort();
   }
 
   public libraryHeadingKey(): string {
@@ -256,7 +287,7 @@ export class Library implements OnInit, OnDestroy {
 
       this.newestAlbums = viewModels;
 
-      this.albums.set(viewModels);
+      this.setAlbumResults(viewModels);
     } catch (error: unknown) {
       if (requestId !== this.libraryRequestId) {
         return;
@@ -289,15 +320,15 @@ export class Library implements OnInit, OnDestroy {
         return;
       }
 
-      this.albums.set(viewModels);
+      this.setAlbumResults(viewModels);
     } catch {
       if (requestId !== this.libraryRequestId) {
         return;
       }
 
-      const fallbackAlbums = this.newestAlbums.length > 0 ? this.newestAlbums : this.albums();
+      const fallbackAlbums = this.newestAlbums.length > 0 ? this.newestAlbums : this.albumResults;
 
-      this.albums.set(this.filterAlbumViewModels(query, fallbackAlbums));
+      this.setAlbumResults(this.filterAlbumViewModels(query, fallbackAlbums));
     } finally {
       if (requestId === this.libraryRequestId) {
         this.searching.set(false);
@@ -318,6 +349,66 @@ export class Library implements OnInit, OnDestroy {
 
   private normalizedSearchQuery(): string {
     return this.searchQuery().trim();
+  }
+
+  private setAlbumResults(albums: readonly AlbumViewModel[]): void {
+    this.albumResults = albums;
+
+    this.applyAlbumSort();
+  }
+
+  private applyAlbumSort(): void {
+    this.albums.set(this.sortAlbumViewModels(this.albumResults));
+  }
+
+  private sortAlbumViewModels(albums: readonly AlbumViewModel[]): readonly AlbumViewModel[] {
+    if (this.sortMode() === 'recentlyAdded') {
+      return albums;
+    }
+
+    return albums
+      .map((item, index) => ({ item, index }))
+      .sort(
+        (left, right) =>
+          this.compareAlbumViewModels(left.item, right.item) || left.index - right.index,
+      )
+      .map(({ item }) => item);
+  }
+
+  private compareAlbumViewModels(left: AlbumViewModel, right: AlbumViewModel): number {
+    switch (this.sortMode()) {
+      case 'titleAsc':
+        return this.compareText(this.albumTitle(left.album), this.albumTitle(right.album), 'asc');
+
+      case 'titleDesc':
+        return this.compareText(this.albumTitle(left.album), this.albumTitle(right.album), 'desc');
+
+      case 'artistAsc':
+        return this.compareText(this.albumArtist(left.album), this.albumArtist(right.album), 'asc');
+
+      case 'artistDesc':
+        return this.compareText(
+          this.albumArtist(left.album),
+          this.albumArtist(right.album),
+          'desc',
+        );
+
+      default:
+        return 0;
+    }
+  }
+
+  private compareText(left: string, right: string, direction: 'asc' | 'desc'): number {
+    const comparison = left.localeCompare(right, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    });
+
+    return direction === 'asc' ? comparison : -comparison;
+  }
+
+  private isAlbumSortMode(value: string): value is AlbumSortMode {
+    return albumSortOptions.some((option) => option.mode === value);
   }
 
   private filterAlbumViewModels(

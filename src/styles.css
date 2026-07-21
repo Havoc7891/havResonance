@@ -66,12 +66,14 @@ a,
 input[type='button']:not(:disabled),
 input[type='range']:not(:disabled),
 input[type='submit']:not(:disabled),
+select:not(:disabled),
 [role='button'] {
   cursor: pointer;
 }
 
 button:disabled,
-input:disabled {
+input:disabled,
+select:disabled {
   cursor: not-allowed;
 }
 
@@ -93,6 +95,101 @@ html.dark input[type='range'] {
   accent-color: #ffffff;
 }
 
+.app-range {
+  --range-fill: #18181b;
+  --range-progress: 0%;
+  --range-thumb: #18181b;
+  --range-thumb-border: #ffffff;
+  --range-track: #d4d4d8;
+
+  height: 1rem;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+html.dark .app-range {
+  --range-fill: #ffffff;
+  --range-thumb: #ffffff;
+  --range-thumb-border: #09090b;
+  --range-track: #3f3f46;
+}
+
+.app-range::-webkit-slider-runnable-track {
+  height: 0.25rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    var(--range-fill) 0,
+    var(--range-fill) var(--range-progress),
+    var(--range-track) var(--range-progress),
+    var(--range-track) 100%
+  );
+}
+
+.app-range::-webkit-slider-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: -0.3125rem;
+  border: 2px solid var(--range-thumb-border);
+  border-radius: 999px;
+  background: var(--range-thumb);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.app-range::-moz-range-track {
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--range-track);
+}
+
+.app-range::-moz-range-progress {
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--range-fill);
+}
+
+.app-range::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid var(--range-thumb-border);
+  border-radius: 999px;
+  background: var(--range-thumb);
+}
+
+.app-range::-moz-focus-outer {
+  border: 0;
+}
+
+.app-progress-range {
+  height: 0.75rem;
+}
+
+.app-progress-range::-webkit-slider-thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-top: -0.25rem;
+  opacity: 0;
+}
+
+.app-progress-range::-moz-range-thumb {
+  width: 0.75rem;
+  height: 0.75rem;
+  opacity: 0;
+}
+
+.app-progress-range:hover::-webkit-slider-thumb,
+.app-progress-range:focus-visible::-webkit-slider-thumb {
+  opacity: 1;
+}
+
+.app-progress-range:hover::-moz-range-thumb,
+.app-progress-range:focus-visible::-moz-range-thumb {
+  opacity: 1;
+}
+
 @layer components {
   .app-page {
     @apply min-h-screen bg-zinc-50 text-zinc-950 transition-colors dark:bg-zinc-950 dark:text-zinc-100;
@@ -107,15 +204,15 @@ html.dark input[type='range'] {
   }
 
   .app-button {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 disabled:opacity-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 disabled:opacity-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
   }
 
   .app-button-danger {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-400 dark:shadow-none dark:hover:border-red-900 dark:hover:bg-red-950/40 dark:hover:text-red-300;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:text-red-700 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-400 dark:shadow-none dark:hover:border-red-900 dark:hover:bg-red-950/40 dark:hover:text-red-300;
   }
 
   .app-icon-button {
-    @apply inline-flex size-10 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
+    @apply inline-flex size-10 shrink-0 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-600 shadow-sm transition hover:border-zinc-400 hover:bg-zinc-100 hover:text-zinc-950 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:shadow-none dark:hover:border-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-white;
   }
 
   .app-language-option {

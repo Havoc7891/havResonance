@@ -1,41 +1,63 @@
-<main class="app-page pb-32">
+<main class="app-page pb-44 md:pb-32">
   <header class="app-header">
-    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-5">
-      <span>
-        <img src="havResonance-light.svg" alt="havResonance" class="h-27 w-auto dark:hidden" />
-        <img src="havResonance-dark.svg" alt="havResonance" class="hidden h-27 w-auto dark:block" />
+    <div
+      class="mx-auto flex max-w-screen-2xl flex-col items-center gap-4 px-4 py-4 sm:flex-row sm:justify-between sm:px-6 sm:py-5">
+      <span class="shrink-0 sm:flex-1">
+        <img
+          src="havResonance-light.svg"
+          alt="havResonance"
+          class="h-27 w-auto shrink-0 dark:hidden" />
+        <img
+          src="havResonance-dark.svg"
+          alt="havResonance"
+          class="hidden h-27 w-auto shrink-0 dark:block" />
       </span>
 
-      <div class="flex items-center gap-3">
-        <a class="app-button" routerLink="/library">
+      <div
+        class="flex flex-wrap items-center justify-center gap-2 sm:shrink-0 sm:justify-end sm:gap-3">
+        <a
+          class="app-button px-3"
+          routerLink="/library"
+          [attr.aria-label]="'common.library' | translate"
+          [title]="'common.library' | translate">
           <i class="bi bi-music-note-list size-5" aria-hidden="true"></i>
 
-          {{ 'common.library' | translate }}
+          <span class="hidden lg:inline">{{ 'common.library' | translate }}</span>
         </a>
 
-        <a class="app-button" routerLink="/about">
+        <a
+          class="app-button px-3"
+          routerLink="/about"
+          [attr.aria-label]="'common.about' | translate"
+          [title]="'common.about' | translate">
           <i class="bi bi-info-circle size-5" aria-hidden="true"></i>
 
-          {{ 'common.about' | translate }}
+          <span class="hidden lg:inline">{{ 'common.about' | translate }}</span>
         </a>
 
         <app-language-switcher />
 
         <app-theme-toggle />
 
-        <button class="app-button-danger" type="button" (click)="disconnect()">
+        <button
+          class="app-button-danger px-3"
+          type="button"
+          [attr.aria-label]="'common.disconnect' | translate"
+          [title]="'common.disconnect' | translate"
+          (click)="disconnect()">
           <i class="bi bi-box-arrow-left size-5" aria-hidden="true"></i>
 
-          {{ 'common.disconnect' | translate }}
+          <span class="hidden lg:inline">{{ 'common.disconnect' | translate }}</span>
         </button>
       </div>
     </div>
   </header>
 
-  <section class="mx-auto max-w-screen-2xl px-6 py-8">
+  <section class="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8">
     @if (loading()) {
       <div class="grid animate-pulse gap-8 md:grid-cols-[18rem_1fr]">
-        <div class="app-skeleton aspect-square rounded-2xl"></div>
+        <div
+          class="app-skeleton mx-auto aspect-square w-full max-w-72 rounded-2xl md:max-w-none"></div>
 
         <div class="self-end">
           <div class="app-skeleton h-4 w-20 rounded"></div>
@@ -69,9 +91,9 @@
         </button>
       </div>
     } @else if (album(); as currentAlbum) {
-      <div class="grid gap-8 md:grid-cols-[18rem_minmax(0,1fr)]">
+      <div class="grid gap-6 md:grid-cols-[18rem_minmax(0,1fr)] md:gap-8">
         <div
-          class="aspect-square overflow-hidden rounded-2xl bg-zinc-200 shadow-2xl dark:bg-zinc-900">
+          class="mx-auto aspect-square w-full max-w-72 overflow-hidden rounded-2xl bg-zinc-200 shadow-2xl md:max-w-none dark:bg-zinc-900">
           @if (coverArtUrl(); as coverUrl) {
             <img
               class="size-full object-cover"
@@ -87,20 +109,21 @@
           }
         </div>
 
-        <div class="min-w-0 self-end">
+        <div class="min-w-0 self-end text-center md:text-left">
           <p class="app-muted text-sm font-semibold uppercase tracking-wider">
             {{ 'album.album' | translate }}
           </p>
 
-          <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          <h1 class="mt-3 break-words text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             {{ currentAlbum.name ?? currentAlbum.album ?? ('album.unknownAlbum' | translate) }}
           </h1>
 
-          <p class="app-muted mt-5 text-xl">
+          <p class="app-muted mt-5 text-lg sm:text-xl">
             {{ currentAlbum.artist ?? ('album.unknownArtist' | translate) }}
           </p>
 
-          <div class="app-subtle mt-4 flex flex-wrap gap-x-2 text-sm">
+          <div
+            class="app-subtle mt-4 flex flex-wrap justify-center gap-x-2 text-sm md:justify-start">
             @if (currentAlbum.year) {
               <span>{{ currentAlbum.year }}</span>
             }
@@ -127,7 +150,7 @@
 
           @if (songs().length > 0) {
             <button
-              class="app-primary-action mt-7 px-6 py-3"
+              class="app-primary-action mx-auto mt-7 w-full px-5 py-3 sm:w-auto sm:px-6 md:mx-0"
               type="button"
               [attr.aria-label]="albumPlaybackKey(currentAlbum) | translate"
               (click)="toggleAlbumPlayback()">
@@ -143,9 +166,9 @@
         </div>
       </div>
 
-      <div class="mt-12">
+      <div class="mt-10 sm:mt-12">
         <div
-          class="app-divider app-subtle grid grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem] border-b px-3 pb-3 text-xs font-medium uppercase tracking-wider">
+          class="app-divider app-subtle grid grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.75rem] border-b px-2 pb-3 text-[11px] font-medium uppercase tracking-wider sm:grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem] sm:px-3 sm:text-xs">
           <span>#</span>
           <span>{{ 'album.title' | translate }}</span>
           <span aria-hidden="true"></span>
@@ -155,10 +178,10 @@
         <div class="mt-2">
           @for (song of songs(); track song.id; let i = $index) {
             <div
-              class="app-row group grid w-full grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem] items-center rounded-lg"
+              class="app-row group grid w-full grid-cols-[2rem_minmax(0,1fr)_2.5rem_3.75rem] items-center rounded-lg sm:grid-cols-[2.5rem_minmax(0,1fr)_3rem_5rem]"
               [class.app-row-active]="isCurrentSong(song)">
               <button
-                class="col-span-2 grid min-w-0 grid-cols-[2.5rem_minmax(0,1fr)] items-center px-3 py-3 text-left disabled:cursor-not-allowed disabled:opacity-60"
+                class="col-span-2 grid min-w-0 grid-cols-[2rem_minmax(0,1fr)] items-center px-2 py-3 text-left disabled:cursor-not-allowed disabled:opacity-60 sm:grid-cols-[2.5rem_minmax(0,1fr)] sm:px-3"
                 type="button"
                 [disabled]="startingTrackId() === song.id"
                 (click)="playSong(song)">
@@ -183,7 +206,7 @@
                   }
                 </span>
 
-                <span class="min-w-0 pr-4">
+                <span class="min-w-0 pr-2 sm:pr-4">
                   <span
                     class="block truncate font-medium"
                     [class.app-current-text]="isCurrentSong(song)"
@@ -201,7 +224,7 @@
 
               @if (hasLyrics(song)) {
                 <button
-                  class="app-control-muted size-9 justify-self-center rounded-lg"
+                  class="app-control-muted size-8 justify-self-center rounded-lg sm:size-9"
                   type="button"
                   [attr.aria-label]="
                     'lyrics.openForTrack'
@@ -214,7 +237,7 @@
                 <span aria-hidden="true"></span>
               }
 
-              <span class="app-subtle px-3 text-right text-sm tabular-nums">
+              <span class="app-subtle px-2 text-right text-xs tabular-nums sm:px-3 sm:text-sm">
                 {{ formatDuration(song.duration) }}
               </span>
             </div>

@@ -20,4 +20,17 @@ describe('PlayerBar', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should toggle between elapsed and remaining playback time', () => {
+    component.player.currentTime.set(65);
+    component.player.duration.set(245);
+
+    expect(component.durationToggleLabelKey()).toBe('player.showRemainingTime');
+    expect(component.playbackTimeDisplay()).toBe('1:05');
+
+    component.toggleDurationMode();
+
+    expect(component.durationToggleLabelKey()).toBe('player.showElapsedTime');
+    expect(component.playbackTimeDisplay()).toBe('-3:00');
+  });
 });

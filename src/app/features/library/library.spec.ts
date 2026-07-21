@@ -80,4 +80,45 @@ describe('Library', () => {
       },
     ]);
   });
+
+  it('should sort loaded albums and restore the recently added order', async () => {
+    openSubsonic.getNewestAlbums.mockResolvedValue([
+      {
+        id: 'beta',
+        name: 'Beta',
+        artist: 'B Artist',
+      },
+      {
+        id: 'alpha',
+        name: 'Alpha',
+        artist: 'C Artist',
+      },
+      {
+        id: 'gamma',
+        name: 'Gamma',
+        artist: 'A Artist',
+      },
+    ]);
+
+    await component.reload();
+
+    const albumIds = () => component.albums().map((item) => item.album.id);
+    const changeSort = (value: string) => {
+      component.sortChanged({ target: { value } } as unknown as Event);
+    };
+
+    expect(albumIds()).toEqual(['beta', 'alpha', 'gamma']);
+
+    changeSort('titleAsc');
+
+    expect(albumIds()).toEqual(['alpha', 'beta', 'gamma']);
+
+    changeSort('artistDesc');
+
+    expect(albumIds()).toEqual(['alpha', 'beta', 'gamma']);
+
+    changeSort('recentlyAdded');
+
+    expect(albumIds()).toEqual(['beta', 'alpha', 'gamma']);
+  });
 });

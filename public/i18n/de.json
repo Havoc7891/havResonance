@@ -84,6 +84,12 @@
     "searchResults": "Suchergebnisse",
     "searchingAlbums": "Alben werden gesucht",
     "singleAlbum": "1 Album",
+    "sortAlbums": "Alben sortieren",
+    "sortArtistAsc": "Künstler A-Z",
+    "sortArtistDesc": "Künstler Z-A",
+    "sortRecentlyAdded": "Zuletzt hinzugefügt",
+    "sortTitleAsc": "Albumtitel A-Z",
+    "sortTitleDesc": "Albumtitel Z-A",
     "totalAlbums": "{{count}} Alben"
   },
   "lyrics": {
@@ -108,6 +114,8 @@
     "repeatAll": "Alle wiederholen",
     "repeatCurrentTrack": "Aktuellen Titel wiederholen",
     "repeatOff": "Wiederholung aus",
+    "showElapsedTime": "Verstrichene Zeit anzeigen",
+    "showRemainingTime": "Verbleibende Zeit anzeigen",
     "shuffle": "Zufallswiedergabe umschalten",
     "startingPlayback": "Wiedergabe wird gestartet",
     "unmute": "Ton einschalten",

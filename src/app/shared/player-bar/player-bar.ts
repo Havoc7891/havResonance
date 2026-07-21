@@ -20,6 +20,7 @@ export class PlayerBar {
   public readonly queueOpen = signal<boolean>(false);
   public readonly lyricsOpen = signal<boolean>(false);
   public readonly lyricsAvailable = signal<boolean>(false);
+  public readonly remainingTimeVisible = signal<boolean>(false);
 
   private lyricsAvailabilityRequestId = 0;
 
@@ -122,6 +123,22 @@ export class PlayerBar {
     this.player.toggleMute();
   }
 
+  public toggleDurationMode(): void {
+    this.remainingTimeVisible.update((visible) => !visible);
+  }
+
+  public durationToggleLabelKey(): string {
+    return this.remainingTimeVisible() ? 'player.showElapsedTime' : 'player.showRemainingTime';
+  }
+
+  public playbackTimeDisplay(): string {
+    if (!this.remainingTimeVisible()) {
+      return this.formatDuration(this.player.currentTime());
+    }
+
+    return `-${this.formatDuration(this.remainingTime())}`;
+  }
+
   public formatDuration(seconds: number): string {
     if (!Number.isFinite(seconds)) {
       return '0:00';
@@ -132,6 +149,17 @@ export class PlayerBar {
     const remainingSeconds = totalSeconds % 60;
 
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  private remainingTime(): number {
+    const duration = this.player.duration();
+    const currentTime = this.player.currentTime();
+
+    if (!Number.isFinite(duration) || !Number.isFinite(currentTime)) {
+      return 0;
+    }
+
+    return Math.max(0, duration - currentTime);
   }
 
   private async loadLyricsAvailability(track: PlayerTrack): Promise<void> {

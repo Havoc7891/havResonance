@@ -1,18 +1,23 @@
-<main class="app-page pb-32">
+<main class="app-page pb-44 md:pb-32">
   <header class="app-header">
-    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-5">
-      <div class="flex items-center gap-3">
-        <span>
-          <img src="havResonance-light.svg" alt="havResonance" class="h-27 w-auto dark:hidden" />
+    <div
+      class="mx-auto flex max-w-screen-2xl flex-col items-center gap-4 px-4 py-4 sm:flex-row sm:justify-between sm:px-6 sm:py-5">
+      <div
+        class="flex min-w-0 flex-col items-center gap-2 text-center sm:flex-1 sm:flex-row sm:gap-3 sm:text-left">
+        <span class="shrink-0">
+          <img
+            src="havResonance-light.svg"
+            alt="havResonance"
+            class="h-27 w-auto shrink-0 dark:hidden" />
           <img
             src="havResonance-dark.svg"
             alt="havResonance"
-            class="hidden h-27 w-auto dark:block" />
+            class="hidden h-27 w-auto shrink-0 dark:block" />
         </span>
 
-        <p class="app-muted mt-1 text-sm">
+        <p class="app-muted min-w-0 text-sm leading-5">
           {{ 'library.connectedTo' | translate }}
-          <span class="font-medium text-zinc-800 dark:text-zinc-300">
+          <span class="break-words font-medium text-zinc-800 dark:text-zinc-300">
             {{ connectionState.connectionDisplayName() }}
           </span>
           @if (connectionState.connection()?.serverVersion; as serverVersion) {
@@ -21,8 +26,15 @@
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
-        <button class="app-button" type="button" [disabled]="loading()" (click)="reload()">
+      <div
+        class="flex flex-wrap items-center justify-center gap-2 sm:shrink-0 sm:justify-end sm:gap-3">
+        <button
+          class="app-button px-3"
+          type="button"
+          [disabled]="loading()"
+          [attr.aria-label]="(loading() ? 'library.reloading' : 'library.reload') | translate"
+          [title]="(loading() ? 'library.reloading' : 'library.reload') | translate"
+          (click)="reload()">
           @if (loading()) {
             <span
               class="size-4 animate-spin rounded-full border-2 border-zinc-400 border-t-zinc-800 dark:border-zinc-600 dark:border-t-zinc-300"
@@ -31,29 +43,40 @@
             <i class="bi bi-arrow-clockwise size-5" aria-hidden="true"></i>
           }
 
-          {{ (loading() ? 'library.reloading' : 'library.reload') | translate }}
+          <span class="hidden lg:inline">
+            {{ (loading() ? 'library.reloading' : 'library.reload') | translate }}
+          </span>
         </button>
 
-        <a class="app-button" routerLink="/about">
+        <a
+          class="app-button px-3"
+          routerLink="/about"
+          [attr.aria-label]="'common.about' | translate"
+          [title]="'common.about' | translate">
           <i class="bi bi-info-circle size-5" aria-hidden="true"></i>
 
-          {{ 'common.about' | translate }}
+          <span class="hidden lg:inline">{{ 'common.about' | translate }}</span>
         </a>
 
         <app-language-switcher />
 
         <app-theme-toggle />
 
-        <button class="app-button-danger" type="button" (click)="disconnect()">
+        <button
+          class="app-button-danger px-3"
+          type="button"
+          [attr.aria-label]="'common.disconnect' | translate"
+          [title]="'common.disconnect' | translate"
+          (click)="disconnect()">
           <i class="bi bi-box-arrow-left size-5" aria-hidden="true"></i>
 
-          {{ 'common.disconnect' | translate }}
+          <span class="hidden lg:inline">{{ 'common.disconnect' | translate }}</span>
         </button>
       </div>
     </div>
   </header>
 
-  <section class="mx-auto max-w-screen-2xl px-6 py-8">
+  <section class="mx-auto max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8">
     <div class="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
       <div>
         <h2 class="text-xl font-semibold">{{ libraryHeadingKey() | translate }}</h2>
@@ -63,50 +86,76 @@
         </p>
       </div>
 
-      <label class="block w-full sm:max-w-sm">
-        <span class="sr-only">{{ 'library.searchAlbums' | translate }}</span>
+      <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+        <label class="block w-full sm:w-56">
+          <span class="sr-only">{{ 'library.sortAlbums' | translate }}</span>
 
-        <span class="relative block">
-          <i
-            class="bi bi-search app-subtle pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
-            aria-hidden="true"></i>
+          <span class="relative block">
+            <i
+              class="bi bi-arrow-down-up app-subtle pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
+              aria-hidden="true"></i>
 
-          <input
-            class="app-input py-2.5 pl-10 pr-10 text-sm"
-            type="search"
-            [value]="searchQuery()"
-            [placeholder]="'library.searchPlaceholder' | translate"
-            autocomplete="off"
-            (input)="searchChanged($event)" />
+            <select
+              class="app-input appearance-none py-2.5 pl-10 pr-10 text-sm"
+              [value]="sortMode()"
+              [attr.aria-label]="'library.sortAlbums' | translate"
+              (change)="sortChanged($event)">
+              @for (option of sortOptions; track option.mode) {
+                <option [value]="option.mode">{{ option.labelKey | translate }}</option>
+              }
+            </select>
 
-          @if (searching()) {
-            <span
-              class="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-800 dark:border-zinc-700 dark:border-t-zinc-300"
-              [attr.aria-label]="'library.searchingAlbums' | translate"></span>
-          } @else if (searchQuery()) {
-            <button
-              class="app-control-muted absolute right-2 top-1/2 size-7 -translate-y-1/2 rounded-full"
-              type="button"
-              [attr.aria-label]="'library.clearSearch' | translate"
-              (click)="clearSearch()">
-              <i class="bi bi-x size-4" aria-hidden="true"></i>
-            </button>
-          }
-        </span>
-      </label>
+            <i
+              class="bi bi-chevron-down app-subtle pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2"
+              aria-hidden="true"></i>
+          </span>
+        </label>
+
+        <label class="block w-full sm:w-80">
+          <span class="sr-only">{{ 'library.searchAlbums' | translate }}</span>
+
+          <span class="relative block">
+            <i
+              class="bi bi-search app-subtle pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2"
+              aria-hidden="true"></i>
+
+            <input
+              class="app-input py-2.5 pl-10 pr-10 text-sm"
+              type="search"
+              [value]="searchQuery()"
+              [placeholder]="'library.searchPlaceholder' | translate"
+              autocomplete="off"
+              (input)="searchChanged($event)" />
+
+            @if (searching()) {
+              <span
+                class="absolute right-3 top-1/2 size-4 -translate-y-1/2 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-800 dark:border-zinc-700 dark:border-t-zinc-300"
+                [attr.aria-label]="'library.searchingAlbums' | translate"></span>
+            } @else if (searchQuery()) {
+              <button
+                class="app-control-muted absolute right-2 top-1/2 size-7 -translate-y-1/2 rounded-full"
+                type="button"
+                [attr.aria-label]="'library.clearSearch' | translate"
+                (click)="clearSearch()">
+                <i class="bi bi-x size-4" aria-hidden="true"></i>
+              </button>
+            }
+          </span>
+        </label>
+      </div>
     </div>
 
     @if (loading()) {
       <div
-        class="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
+        class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-8 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6"
         [attr.aria-label]="'library.loadingAlbums' | translate">
         @for (item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track item) {
           <div class="animate-pulse">
             <div class="app-skeleton aspect-square rounded-xl"></div>
 
-            <div class="app-skeleton mt-4 h4 w-3/4 rounded-lg"></div>
+            <div class="app-skeleton mt-4 h-4 w-3/4 rounded-lg"></div>
 
-            <div class="app-skeleton mt-2 h3 w-1/2 rounded-lg"></div>
+            <div class="app-skeleton mt-2 h-3 w-1/2 rounded-lg"></div>
           </div>
         }
       </div>
@@ -135,7 +184,7 @@
       </div>
     } @else {
       <div
-        class="grid grid-cols-2 gap-x-5 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+        class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-8 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
         @for (item of albums(); track item.album.id) {
           <article class="group min-w-0">
             <div class="relative">
@@ -164,7 +213,7 @@
               </button>
 
               <button
-                class="app-floating-action pointer-events-none absolute bottom-3 right-3 z-10 flex size-11 items-center justify-center rounded-full opacity-0 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                class="app-floating-action absolute bottom-2 right-2 z-10 flex size-10 items-center justify-center rounded-full opacity-100 sm:pointer-events-none sm:bottom-3 sm:right-3 sm:size-11 sm:opacity-0 sm:group-hover:pointer-events-auto sm:group-hover:opacity-100 sm:group-focus-within:pointer-events-auto sm:group-focus-within:opacity-100"
                 type="button"
                 [disabled]="startingAlbumId() === item.album.id"
                 [class.pointer-events-auto]="
@@ -187,9 +236,12 @@
               </button>
             </div>
 
-            <button class="block w-full text-left" type="button" (click)="openAlbum(item.album.id)">
+            <button
+              class="block w-full text-center sm:text-left"
+              type="button"
+              (click)="openAlbum(item.album.id)">
               <h3
-                class="mt-4 truncate font-medium text-zinc-950 dark:text-zinc-100"
+                class="mt-3 truncate font-medium text-zinc-950 sm:mt-4 dark:text-zinc-100"
                 [title]="albumTitle(item.album)">
                 {{ albumTitle(item.album) }}
               </h3>

@@ -7,10 +7,10 @@
       (click)="close()"></button>
 
     <aside
-      class="app-divider absolute inset-y-0 right-0 flex w-full max-w-md flex-col border-l bg-white text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-zinc-100"
+      class="app-divider absolute inset-y-0 right-0 flex w-full max-w-md flex-col sm:border-l bg-white text-zinc-950 shadow-2xl dark:bg-zinc-950 dark:text-zinc-100"
       [attr.aria-label]="'queue.title' | translate">
-      <header class="app-divider flex items-center justify-between border-b px-5 py-4">
-        <div>
+      <header class="app-divider flex items-start justify-between gap-3 border-b px-4 py-4 sm:px-5">
+        <div class="min-w-0 flex-1">
           <h2 class="text-lg font-semibold">{{ 'queue.title' | translate }}</h2>
 
           <p class="app-subtle mt-1 text-xs">
@@ -19,24 +19,24 @@
                 | translate: { count: player.queue().length }
             }}
           </p>
-        </div>
 
-        <div class="app-faint mt-2 flex gap-2 text-xs">
-          @if (player.shuffleEnabled()) {
-            <span>{{ 'queue.shuffleOn' | translate }}</span>
-          }
+          <div class="app-faint mt-2 flex flex-wrap gap-2 text-xs">
+            @if (player.shuffleEnabled()) {
+              <span>{{ 'queue.shuffleOn' | translate }}</span>
+            }
 
-          @if (player.repeatMode() === 'all') {
-            <span>{{ 'queue.repeatAll' | translate }}</span>
-          }
+            @if (player.repeatMode() === 'all') {
+              <span>{{ 'queue.repeatAll' | translate }}</span>
+            }
 
-          @if (player.repeatMode() === 'one') {
-            <span>{{ 'queue.repeatOne' | translate }}</span>
-          }
+            @if (player.repeatMode() === 'one') {
+              <span>{{ 'queue.repeatOne' | translate }}</span>
+            }
+          </div>
         </div>
 
         <button
-          class="app-control-muted size-9 rounded-full"
+          class="app-control-muted size-9 shrink-0 rounded-full"
           type="button"
           [attr.aria-label]="'queue.close' | translate"
           (click)="close()">
@@ -56,11 +56,12 @@
         <div class="flex-1 overflow-y-auto p-3">
           @for (track of player.queue(); track track.id; let i = $index) {
             <button
-              class="app-row group mb-1 grid w-full grid-cols-[3rem_minmax(0,1fr)_auto] items-center gap-3 rounded-xl p-2 text-left"
+              class="app-row group mb-1 grid w-full grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-2 rounded-xl p-2 text-left sm:grid-cols-[3rem_minmax(0,1fr)_auto] sm:gap-3"
               type="button"
               [class.app-row-active]="i === player.queueIndex()"
               (click)="selectTrack(i)">
-              <div class="relative size-12 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-900">
+              <div
+                class="relative size-11 overflow-hidden rounded-lg bg-zinc-200 sm:size-12 dark:bg-zinc-900">
                 @if (track.coverArtUrl) {
                   <img
                     class="size-full object-cover"

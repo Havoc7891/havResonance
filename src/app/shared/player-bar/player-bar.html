@@ -2,21 +2,22 @@
   <aside
     class="app-divider fixed inset-x-0 bottom-0 z-50 border-t bg-white/95 text-zinc-950 shadow-2xl backdrop-blur-2xl dark:bg-zinc-950/95 dark:text-zinc-100">
     <input
-      class="absolute inset-x-0 top-0 h-1 w-full cursor-pointer"
+      class="app-range app-progress-range absolute inset-x-0 top-0 w-full cursor-pointer"
       type="range"
       min="0"
       max="100"
       step="0.1"
       [value]="player.progress()"
+      [style.--range-progress]="player.progress() + '%'"
       [attr.aria-label]="'player.position' | translate"
       (input)="seek($event)" />
 
     <div
-      class="mx-auto grid max-w-screen-2xl grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-4 py-3 md:grid-cols-[minmax(0,1fr)_minmax(18rem,1fr)_minmax(0,1fr)]">
-      <div class="flex min-w-0 items-center gap-3">
+      class="mx-auto grid max-w-screen-2xl gap-3 px-4 pb-3 pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4 sm:py-3 md:grid-cols-[minmax(0,1fr)_minmax(18rem,1fr)_minmax(0,1fr)]">
+      <div class="flex min-w-0 items-center justify-center gap-3 sm:justify-start">
         @if (track.albumId) {
           <a
-            class="size-12 shrink-0 overflow-hidden rounded-lg bg-zinc-200 transition hover:opacity-80 dark:bg-zinc-900"
+            class="size-11 shrink-0 overflow-hidden rounded-lg bg-zinc-200 transition hover:opacity-80 sm:size-12 dark:bg-zinc-900"
             [routerLink]="['/album', track.albumId]"
             [attr.aria-label]="'common.openAlbum' | translate: { album: track.album }">
             @if (track.coverArtUrl) {
@@ -24,14 +25,15 @@
             }
           </a>
         } @else {
-          <div class="size-12 shrink-0 overflow-hidden rounded-lg bg-zinc-200 dark:bg-zinc-900">
+          <div
+            class="size-11 shrink-0 overflow-hidden rounded-lg bg-zinc-200 sm:size-12 dark:bg-zinc-900">
             @if (track.coverArtUrl) {
               <img class="size-full object-cover" [src]="track.coverArtUrl" [alt]="track.album" />
             }
           </div>
         }
 
-        <div class="min-w-0">
+        <div class="min-w-0 text-center sm:text-left">
           @if (track.albumId) {
             <a
               class="block truncate text-sm font-medium transition hover:text-zinc-950 hover:underline dark:hover:text-white"
@@ -59,9 +61,10 @@
         </div>
       </div>
 
-      <div class="flex items-center justify-end gap-2 md:justify-center">
+      <div
+        class="flex flex-wrap items-center justify-center gap-2 sm:justify-end md:justify-center">
         <button
-          class="app-control relative hidden size-9 rounded-full sm:flex"
+          class="app-control relative size-9 rounded-full"
           type="button"
           [class.app-active-control]="player.shuffleEnabled()"
           [disabled]="player.queue().length < 2"
@@ -106,7 +109,7 @@
         </button>
 
         <button
-          class="app-control relative hidden size-9 rounded-full sm:flex"
+          class="app-control relative size-9 rounded-full"
           type="button"
           [class.app-active-control]="player.repeatMode() !== 'off'"
           [attr.aria-label]="repeatLabel() | translate"
@@ -133,18 +136,71 @@
         }
 
         <button
-          class="app-control-muted size-9 rounded-full md:hidden"
+          class="app-control-muted relative size-9 rounded-full md:hidden"
           type="button"
           [attr.aria-label]="'player.openQueue' | translate"
           (click)="openQueue()">
           <i class="bi bi-list-ul size-5" aria-hidden="true"></i>
+
+          @if (player.upcomingCount() > 0) {
+            <span
+              class="app-action-badge absolute -right-1 -top-1 flex min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold leading-4">
+              {{ player.upcomingCount() }}
+            </span>
+          }
         </button>
 
-        <span class="app-subtle hidden min-w-24 text-xs tabular-nums sm:block">
-          {{ formatDuration(player.currentTime()) }}
+        <button
+          class="app-control-muted size-9 rounded-full md:hidden"
+          type="button"
+          [attr.aria-label]="
+            (player.effectivelyMuted() ? 'player.unmute' : 'player.mute') | translate
+          "
+          [attr.aria-pressed]="player.effectivelyMuted()"
+          (click)="toggleMute()">
+          @if (player.effectivelyMuted()) {
+            <i class="bi bi-volume-mute size-5" aria-hidden="true"></i>
+          } @else if (player.volume() < 0.5) {
+            <i class="bi bi-volume-down size-5" aria-hidden="true"></i>
+          } @else {
+            <i class="bi bi-volume-up size-5" aria-hidden="true"></i>
+          }
+        </button>
+
+        <button
+          class="app-control-muted min-w-24 rounded-md px-1 py-1 text-center text-xs tabular-nums"
+          type="button"
+          [attr.aria-pressed]="remainingTimeVisible()"
+          [attr.aria-label]="durationToggleLabelKey() | translate"
+          [title]="durationToggleLabelKey() | translate"
+          (click)="toggleDurationMode()">
+          {{ playbackTimeDisplay() }}
           /
           {{ formatDuration(player.duration()) }}
+        </button>
+      </div>
+
+      <div class="flex items-center gap-3 sm:col-span-2 md:hidden">
+        <span class="app-subtle text-xs">
+          @if (player.effectivelyMuted()) {
+            <i class="bi bi-volume-mute size-4" aria-hidden="true"></i>
+          } @else if (player.volume() < 0.5) {
+            <i class="bi bi-volume-down size-4" aria-hidden="true"></i>
+          } @else {
+            <i class="bi bi-volume-up size-4" aria-hidden="true"></i>
+          }
         </span>
+
+        <input
+          class="app-range min-w-0 flex-1"
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          [value]="player.volume()"
+          [style.--range-progress]="player.volume() * 100 + '%'"
+          [attr.aria-label]="'player.volume' | translate"
+          (input)="changeVolume($event)" />
       </div>
 
       <div class="hidden items-center justify-end gap-3 md:flex">
@@ -191,12 +247,13 @@
         </button>
 
         <input
-          class="w-24"
+          class="app-range w-24"
           type="range"
           min="0"
           max="1"
           step="0.01"
           [value]="player.volume()"
+          [style.--range-progress]="player.volume() * 100 + '%'"
           [attr.aria-label]="'player.volume' | translate"
           (input)="changeVolume($event)" />
       </div>

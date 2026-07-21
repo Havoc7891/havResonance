@@ -1,16 +1,28 @@
-<main class="app-page pb-24">
+<main class="app-page pb-44 md:pb-24">
   <header class="app-header">
-    <div class="mx-auto flex max-w-screen-2xl items-center justify-between px-6 py-5">
-      <span>
-        <img src="havResonance-light.svg" alt="havResonance" class="h-27 w-auto dark:hidden" />
-        <img src="havResonance-dark.svg" alt="havResonance" class="hidden h-27 w-auto dark:block" />
+    <div
+      class="mx-auto flex max-w-screen-2xl flex-col items-center gap-4 px-4 py-4 sm:flex-row sm:justify-between sm:px-6 sm:py-5">
+      <span class="shrink-0 sm:flex-1">
+        <img
+          src="havResonance-light.svg"
+          alt="havResonance"
+          class="h-27 w-auto shrink-0 dark:hidden" />
+        <img
+          src="havResonance-dark.svg"
+          alt="havResonance"
+          class="hidden h-27 w-auto shrink-0 dark:block" />
       </span>
 
-      <div class="flex items-center gap-3">
-        <a class="app-button" [routerLink]="returnRoute()">
+      <div
+        class="flex flex-wrap items-center justify-center gap-2 sm:shrink-0 sm:justify-end sm:gap-3">
+        <a
+          class="app-button px-3"
+          [routerLink]="returnRoute()"
+          [attr.aria-label]="returnLabelKey() | translate"
+          [title]="returnLabelKey() | translate">
           <i class="bi size-5" [class]="returnIcon()" aria-hidden="true"></i>
 
-          {{ returnLabelKey() | translate }}
+          <span class="hidden lg:inline">{{ returnLabelKey() | translate }}</span>
         </a>
 
         <app-language-switcher />
@@ -18,28 +30,33 @@
         <app-theme-toggle />
 
         @if (connectionState.connected()) {
-          <button class="app-button-danger" type="button" (click)="disconnect()">
+          <button
+            class="app-button-danger px-3"
+            type="button"
+            [attr.aria-label]="'common.disconnect' | translate"
+            [title]="'common.disconnect' | translate"
+            (click)="disconnect()">
             <i class="bi bi-box-arrow-left size-5" aria-hidden="true"></i>
 
-            {{ 'common.disconnect' | translate }}
+            <span class="hidden lg:inline">{{ 'common.disconnect' | translate }}</span>
           </button>
         }
       </div>
     </div>
   </header>
 
-  <section class="mx-auto max-w-3xl px-6 py-12">
+  <section class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
     <p class="app-subtle text-sm font-semibold uppercase tracking-wider">
       {{ 'about.about' | translate }}
     </p>
 
-    <h1 class="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">havResonance</h1>
+    <h1 class="mt-3 text-3xl font-bold tracking-tight sm:text-5xl">havResonance</h1>
 
     <p class="app-subtle mt-3 text-sm font-medium">
       {{ 'about.version' | translate: { version: appVersion } }}
     </p>
 
-    <p class="app-muted mt-5 text-lg leading-8">
+    <p class="app-muted mt-5 text-base leading-7 sm:text-lg sm:leading-8">
       {{ 'about.tagline' | translate }}
     </p>
 

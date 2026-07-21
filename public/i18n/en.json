@@ -84,6 +84,12 @@
     "searchResults": "Search results",
     "searchingAlbums": "Searching albums",
     "singleAlbum": "1 album",
+    "sortAlbums": "Sort albums",
+    "sortArtistAsc": "Artist A-Z",
+    "sortArtistDesc": "Artist Z-A",
+    "sortRecentlyAdded": "Recently added",
+    "sortTitleAsc": "Album title A-Z",
+    "sortTitleDesc": "Album title Z-A",
     "totalAlbums": "{{count}} albums"
   },
   "lyrics": {
@@ -108,6 +114,8 @@
     "repeatAll": "Repeat all",
     "repeatCurrentTrack": "Repeat current track",
     "repeatOff": "Repeat off",
+    "showElapsedTime": "Show elapsed time",
+    "showRemainingTime": "Show remaining time",
     "shuffle": "Toggle shuffle",
     "startingPlayback": "Starting playback",
     "unmute": "Unmute",

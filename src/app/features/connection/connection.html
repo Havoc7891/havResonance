@@ -1,10 +1,14 @@
-<main class="app-page flex items-center justify-center px-4 py-12">
-  <section class="app-card w-full max-w-md rounded-2xl p-8">
-    <nav class="mb-6 flex justify-end gap-2">
-      <a class="app-button px-3 py-1.5" routerLink="/about">
+<main class="app-page flex items-start justify-center px-4 py-6 sm:items-center sm:py-12">
+  <section class="app-card w-full max-w-md rounded-2xl p-6 sm:p-8">
+    <nav class="mb-6 flex flex-wrap justify-center gap-2 sm:justify-end">
+      <a
+        class="app-button px-3 py-1.5"
+        routerLink="/about"
+        [attr.aria-label]="'common.about' | translate"
+        [title]="'common.about' | translate">
         <i class="bi bi-info-circle size-4" aria-hidden="true"></i>
 
-        {{ 'common.about' | translate }}
+        <span class="hidden lg:inline">{{ 'common.about' | translate }}</span>
       </a>
 
       <app-language-switcher />
@@ -16,11 +20,11 @@
       <img
         src="havResonance-light.svg"
         alt="havResonance"
-        class="mx-auto mb-8 h-27 w-auto dark:hidden" />
+        class="mx-auto mb-6 h-27 w-auto shrink-0 sm:mb-8 dark:hidden" />
       <img
         src="havResonance-dark.svg"
         alt="havResonance"
-        class="mx-auto mb-8 hidden h-27 w-auto dark:block" />
+        class="mx-auto mb-6 hidden h-27 w-auto shrink-0 sm:mb-8 dark:block" />
 
       <p class="app-muted mt-2 text-sm">{{ 'connection.description' | translate }}</p>
     </header>
@@ -29,7 +33,8 @@
       <fieldset>
         <legend class="app-field-label">{{ 'connection.mode' | translate }}</legend>
 
-        <div class="mt-2 grid grid-cols-2 gap-1 rounded-lg bg-zinc-100 p-1 dark:bg-zinc-800">
+        <div
+          class="mt-2 grid grid-cols-1 gap-1 rounded-lg bg-zinc-100 p-1 sm:grid-cols-2 dark:bg-zinc-800">
           <button
             class="flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md px-3 text-sm font-medium transition-colors"
             type="button"

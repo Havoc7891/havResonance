@@ -26,10 +26,10 @@ your connection details, and browse and play the music exposed by that server.
 ## Features
 
 - Browse newest albums from an OpenSubsonic-compatible server
-- Search albums and artists
+- Search and sort albums by recently added, album title, and artist
 - Open album pages with track lists, cover art, durations, and album playback
 - Play albums or individual tracks with a persistent player bar
-- Manage the playback queue, shuffle, repeat, and volume
+- Manage the playback queue, shuffle, repeat, volume, and elapsed/remaining playback time
 - Show lyrics when the connected server provides them
 - Switch between English and German
 - Switch between light and dark mode
