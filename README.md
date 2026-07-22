@@ -160,6 +160,19 @@ OpenSubsonic authentication values are sent as query parameters.
 
 ## Assets
 
+Editable full-logo SVG sources live in `resources/logo`. The runtime logo SVGs in `public` are
+generated from those sources with the text converted to paths, so the logo renders consistently
+without requiring Oswald on the user's system:
+
+```bash
+npm run assets:logo
+```
+
+The Oswald source font and its OFL license are kept in `resources/logo` for reproducible logo
+generation. These files are source assets and are not copied into the browser build. Pass
+`-- --font path/to/Oswald.ttf` only when regenerating the logo from a different font file. The
+PowerShell wrapper `scripts/create-logo-assets.ps1` is also available if preferred.
+
 Favicon and app icon assets are generated from the logo mark SVGs:
 
 ```bash
